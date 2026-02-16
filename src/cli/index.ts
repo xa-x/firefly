@@ -3,10 +3,19 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import { readdir, readFile, writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
+import { join, isAbsolute, resolve, dirname } from 'path';
 import { Database } from 'bun:sqlite';
 
-const DB_PATH = process.env['DATABASE_PATH'] || './data/firefly.db';
+const rawDbPath = process.env['DATABASE_PATH'] || './data/firefly.db';
+const DB_PATH = isAbsolute(rawDbPath) ? rawDbPath : resolve(process.cwd(), rawDbPath);
+
+function openDatabase(): Database {
+  mkdir(dirname(DB_PATH), { recursive: true }).catch(() => {});
+  const db = new Database(DB_PATH);
+  db.run('PRAGMA journal_mode = WAL');
+  db.run('PRAGMA foreign_keys = ON');
+  return db;
+}
 
 const program = new Command();
 
@@ -79,7 +88,7 @@ migrateCmd
     const spinner = ora('Running migrations...').start();
     
     try {
-      const db = new Database(DB_PATH);
+      const db = openDatabase();
       const migrationsDir = join(process.cwd(), 'migrations');
       
       let files: string[] = [];
@@ -134,7 +143,7 @@ migrateCmd
     const spinner = ora('Rolling back migration...').start();
     
     try {
-      const db = new Database(DB_PATH);
+      const db = openDatabase();
       
       const lastMigration = db.query<{ name: string }, []>(
         'SELECT name FROM _migrations ORDER BY applied_at DESC LIMIT 1'
@@ -176,7 +185,7 @@ migrateCmd
     console.log(chalk.blue('\nMigration Status:\n'));
     
     try {
-      const db = new Database(DB_PATH);
+      const db = openDatabase();
       const migrationsDir = join(process.cwd(), 'migrations');
       
       const appliedList = db.query<{ name: string; applied_at: number }, []>(
@@ -317,7 +326,7 @@ tablesCmd
     console.log(chalk.blue('\nTables:\n'));
     
     try {
-      const db = new Database(DB_PATH);
+      const db = openDatabase();
       const tables = db.query<{ name: string; schema: string }, []>(
         'SELECT name, schema FROM _tables ORDER BY created_at DESC'
       ).all();
@@ -349,7 +358,7 @@ tablesCmd
     const spinner = ora(`Dropping table '${name}'...`).start();
     
     try {
-      const db = new Database(DB_PATH);
+      const db = openDatabase();
       
       db.run(`DROP TABLE IF EXISTS "${name}"`);
       db.run('DELETE FROM _tables WHERE name = ?', [name]);
@@ -375,7 +384,7 @@ usersCmd
     console.log(chalk.blue('\nUsers:\n'));
     
     try {
-      const db = new Database(DB_PATH);
+      const db = openDatabase();
       const users = db.query<{ id: string; name: string; email: string; emailVerified: number; createdAt: string }, []>(
         'SELECT id, name, email, emailVerified, createdAt FROM user ORDER BY createdAt DESC'
       ).all();
@@ -407,7 +416,7 @@ usersCmd
     const spinner = ora(`Deleting user '${email}'...`).start();
     
     try {
-      const db = new Database(DB_PATH);
+      const db = openDatabase();
       
       const result = db.run('DELETE FROM user WHERE email = ?', [email]);
       

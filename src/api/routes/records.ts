@@ -284,7 +284,8 @@ function parseWhereClause(where: string): { clause: string; params: unknown[] } 
   const parts = where.split(',');
 
   for (const part of parts) {
-    const [field, op, value] = part.split(':');
+    const [field, op, ...valueParts] = part.split(':');
+    const value = valueParts.join(':');
     if (!field || !op || value === undefined) continue;
 
     const fieldName = `"${field}"`;

@@ -31,7 +31,6 @@ backup.get('/', async (c) => {
           filename: f,
           timestamp,
           type,
-          created: f,
         };
       })
       .sort((a, b) => b.timestamp.localeCompare(a.timestamp));

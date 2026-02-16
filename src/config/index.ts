@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { readFile, writeFile, access } from 'fs/promises';
-import { join } from 'path';
+import { readFile, writeFile, access, mkdir } from 'fs/promises';
+import { join, isAbsolute, resolve, dirname } from 'path';
 import logger from '../utils/logger';
 
 function generateSecureSecret(): string {
@@ -65,10 +65,17 @@ const configSchema = z.object({
 
 type Config = z.infer<typeof configSchema>;
 
+const databasePath = process.env['DATABASE_PATH'] || './data/firefly.db';
+const resolvedDatabasePath = isAbsolute(databasePath) 
+  ? databasePath 
+  : resolve(process.cwd(), databasePath);
+
+await mkdir(dirname(resolvedDatabasePath), { recursive: true }).catch(() => {});
+
 export const config: Config = configSchema.parse({
   port: process.env['PORT'] ? parseInt(process.env['PORT'], 10) : undefined,
   host: process.env['HOST'],
-  databasePath: process.env['DATABASE_PATH'],
+  databasePath: resolvedDatabasePath,
   jwtSecret: process.env['JWT_SECRET'],
   jwtExpiresIn: process.env['JWT_EXPIRES_IN'],
   nodeEnv: process.env['NODE_ENV'],
