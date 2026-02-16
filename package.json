@@ -1,0 +1,50 @@
+{
+  "name": "firefly",
+  "version": "0.1.0",
+  "description": "Lightweight backend-as-a-service powered by Hono.js and SQLite",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "cli": "bun run src/cli/index.ts",
+    "build": "bun build src/index.ts --compile --outfile firefly",
+    "build:cli": "bun build src/cli/index.ts --compile --outfile firefly-cli",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "bin": {
+    "firefly": "./src/cli/index.ts"
+  },
+  "keywords": [
+    "backend",
+    "api",
+    "sqlite",
+    "hono",
+    "baas",
+    "serverless"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/bun": "latest",
+    "@types/jsonwebtoken": "^9.0.10"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "better-auth": "^1.4.18",
+    "better-sqlite3": "^12.6.2",
+    "chalk": "^5.6.2",
+    "commander": "^14.0.3",
+    "hono": "^4.11.9",
+    "jsonwebtoken": "^9.0.3",
+    "ora": "^9.3.0",
+    "zod": "^4.3.6"
+  }
+}
