@@ -7,10 +7,10 @@ A lightweight, headless backend-as-a-service powered by Hono.js and SQLite.
 - 🚀 **Fast** - Built on Bun with Hono.js
 - 💾 **SQLite** - Embedded database, zero configuration
 - 🔐 **Auth** - Better Auth (email/password, OAuth ready)
-- 📊 **Dynamic Tables** - Create tables via API (Phase 3)
-- 🔄 **Migrations** - Schema versioning (Phase 4)
-- 💾 **Backup** - Export/import (Phase 5)
-- 🖥️ **CLI** - Admin tools (Phase 6)
+- 📊 **Dynamic Tables** - Create tables via API
+- 🔄 **Migrations** - Schema versioning
+- 💾 **Backup** - Export/import
+- 🖥️ **CLI** - Admin tools
 
 ## Quick Start
 
@@ -109,10 +109,10 @@ firefly/
 
 - [x] Phase 1: Foundation ✅
 - [x] Phase 2: Authentication ✅
-- [ ] Phase 3: Database Management
-- [ ] Phase 4: Migrations
-- [ ] Phase 5: Backup & Restore
-- [ ] Phase 6: CLI
+- [x] Phase 3: Database Management ✅
+- [x] Phase 4: Migrations ✅
+- [x] Phase 5: Backup & Restore ✅
+- [x] Phase 6: CLI ✅
 - [ ] Phase 7: OpenAPI Docs
 - [ ] Phase 8: Testing
 
